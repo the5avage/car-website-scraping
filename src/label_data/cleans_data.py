@@ -14,7 +14,7 @@ import yaml
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-stream_handler = logging.StreamHandler()          # to stderr by default
+stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(
     logging.Formatter("%(levelname)s: %(message)s")
 )
@@ -27,17 +27,20 @@ logger.addHandler(stream_handler)
 def _dedupe_details_text(details_text: str,
                          details_list: Iterable[str],
                          info_values: Iterable[str]) -> str:
-    phrases = {p.lower().strip() for p in details_list}
-    phrases.update(str(v).lower().strip() for v in info_values)
+    phrases = {p.lower().strip() for p in details_list if p.strip()}
+    phrases.update(str(v).lower().strip() for v in info_values if v)
 
     for phrase in sorted(phrases, key=len, reverse=True):
         if not phrase:
             continue
-        pattern = re.compile(rf"\b{re.escape(phrase)}\b", re.IGNORECASE)
+        pattern = re.compile(rf"\b{re.escape(phrase)}\b[.,;:]?", re.IGNORECASE)
         details_text = pattern.sub("", details_text)
 
-    details_text = re.sub(r"[ \t]{2,}", " ", details_text)
-    details_text = re.sub(r"\n[ \t]*\n+", "\n", details_text)
+    # Remove extra whitespace and punctuation
+    details_text = re.sub(r"\s{2,}", " ", details_text)
+    details_text = re.sub(r"[;,]{2,}", ";", details_text)
+    details_text = re.sub(r"^[\s;,.]+|[\s;,.]+$", "", details_text)
+
     return details_text.strip()
 
 
@@ -46,26 +49,25 @@ def _dedupe_details_text(details_text: str,
 # ---------------------------------------------------------------------------
 def cleanse_data(data_file: str, output_file: str):
     if data_file == output_file:
-        raise ValueError("Choose a different output file; don’t overwrite the source.")
+        raise ValueError("Choose a different output file; don't overwrite the source.")
     if not data_file.endswith(".json"):
         raise ValueError("cleanse_data only accepts .json files.")
 
-    # ---------- load --------------------------------------------------------
     with open(data_file, "r", encoding="utf-8") as read_file:
-        original_data = json.loads(read_file.read())
+        original_data = json.load(read_file)
     if not original_data:
         raise ValueError("The provided file is empty—nothing to clean.")
 
     cleaned_data = {}
 
-    # ---------- clean -------------------------------------------------------
     for url, car_dict in original_data.items():
-        details_list   = car_dict.get("details_list", [])
-        info_dict      = car_dict.get("information_dict", {})
-        details_text   = car_dict.get("details_text", "")
+        details_list = car_dict.get("details_list", [])
+        info_dict = car_dict.get("information_dict", {})
+        details_text = car_dict.get("details_text", "")
 
         # skip incomplete rows
         if not (all(details_list) and all(info_dict.values()) and details_text):
+            logger.warning("Skipped incomplete entry for %s", url)
             continue
 
         cleaned_text = _dedupe_details_text(
@@ -81,11 +83,11 @@ def cleanse_data(data_file: str, output_file: str):
         cleaned_entry["details_text"] = cleaned_text
         cleaned_data[url] = cleaned_entry
 
-    # ---------- save --------------------------------------------------------
+    # Save sorted YAML for readability
     with open(output_file, "w", encoding="utf-8") as write_file:
-        write_file.write(yaml.dump(cleaned_data))
+        yaml.dump(cleaned_data, write_file, sort_keys=True, allow_unicode=True)
 
-    logger.info(f"saved the cleaned data as: {output_file}")
+    logger.info(f"Saved the cleaned data as: {output_file}")
 
     return cleaned_data
 

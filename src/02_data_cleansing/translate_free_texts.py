@@ -123,8 +123,10 @@ def translate_yaml(data_file: str, output_file: str) -> None:
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    default_input = os.path.join(os.path.dirname(__file__), "data", "cleaned_vehicles_data.yaml")
-    default_output = os.path.join(os.path.dirname(__file__), "data", "translated_vehicles_data.yaml")
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../data'))
+
+    default_input = os.path.join(base_dir, "cleaned_vehicles_data.yaml")
+    default_output = os.path.join(base_dir, "translated_vehicles_data.yaml")
 
     ap = argparse.ArgumentParser(description="Translate free-text fields to English (Google Translate)")
     ap.add_argument("--data-file", type=str, default=default_input)

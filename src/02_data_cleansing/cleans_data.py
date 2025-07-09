@@ -96,16 +96,10 @@ def cleanse_data(data_file: str, output_file: str):
 # CLI wrapper
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    default_data_file = os.path.join(
-        os.path.dirname(__file__),
-        "data",
-        "vehicles_data.json"
-    )
-    default_output_file = os.path.join(
-        os.path.dirname(__file__),
-        "data",
-        "cleaned_vehicles_data.yaml"
-    )
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../data'))
+
+    default_data_file = os.path.join(base_dir, "vehicles_data.json")
+    default_output_file = os.path.join(base_dir, "cleaned_vehicles_data.yaml")
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-file", type=str, default=default_data_file)

@@ -6,5 +6,13 @@
   {
     "query": "I am looking for a minivan that has parking aid and heated exterior mirrors",
     "brand": "VW"
+  },
+  {
+    "query": "I also need some more queries to test",
+    "brand": ""
+  },
+  {
+    "query": "and some more",
+    "brand": ""
   }
 ]

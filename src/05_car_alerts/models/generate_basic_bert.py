@@ -1,5 +1,6 @@
-from transformers import AutoModel
+# third party libraries
 import torch
+from transformers import AutoModel
 
 
 def main():

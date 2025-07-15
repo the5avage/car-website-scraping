@@ -1,14 +1,16 @@
-import time
-import random
+# standard library
 import logging
+import random
+import time
 from urllib.parse import urljoin
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
+# third party libraries
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 class ArticleLinkParser:
@@ -31,10 +33,14 @@ class ArticleLinkParser:
     # ------------------------------------------------------------------ #
     def _init_logger(self):
         self.logger = logging.getLogger("ArticleParser")
-        if not self.logger.handlers:                    # configure only once
+        if not self.logger.handlers:  # configure only once
             sh = logging.StreamHandler()
-            sh.setFormatter(logging.Formatter(
-                "[ArticleParser]: %(asctime)s  %(levelname)s  %(message)s", "%H:%M:%S"))
+            sh.setFormatter(
+                logging.Formatter(
+                    "[ArticleParser]: %(asctime)s  %(levelname)s  %(message)s",
+                    "%H:%M:%S",
+                )
+            )
             self.logger.addHandler(sh)
             self.logger.setLevel(logging.INFO)
 
@@ -58,7 +64,8 @@ class ArticleLinkParser:
 
         self.driver = webdriver.Chrome(options=chrome_options)
         self.driver.execute_script(
-            "Object.defineProperty(navigator,'webdriver',{get:()=>undefined});")
+            "Object.defineProperty(navigator,'webdriver',{get:()=>undefined});"
+        )
         self.driver.set_window_size(1366, 768)
         self.logger.info("Chrome driver ready (headless=%s)", headless)
 
@@ -72,8 +79,7 @@ class ArticleLinkParser:
 
     def scroll_page(self, scrolls: int = 3):
         for _ in range(scrolls):
-            self.driver.execute_script(
-                f"window.scrollBy(0,{random.randint(300,800)});")
+            self.driver.execute_script(f"window.scrollBy(0,{random.randint(300,800)});")
             self.human_delay(0.5, 1.5)
         self.driver.execute_script("window.scrollTo(0,0);")
         self.human_delay(1, 2)
@@ -86,15 +92,20 @@ class ArticleLinkParser:
         self.logger.debug("GET %s", url)
         self.driver.get(url)
         WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.TAG_NAME, "body")))
+            EC.presence_of_element_located((By.TAG_NAME, "body"))
+        )
         self.scroll_page()
 
         links = []
         for elem in self.driver.find_elements(By.TAG_NAME, "a"):
             if href := elem.get_attribute("href"):
-                links.append({"url": urljoin(url, href),
-                              "text": elem.text.strip(),
-                              "element": elem})
+                links.append(
+                    {
+                        "url": urljoin(url, href),
+                        "text": elem.text.strip(),
+                        "element": elem,
+                    }
+                )
         self.logger.info("Found %d links on page", len(links))
         return links
 
@@ -128,8 +139,10 @@ class ArticleLinkParser:
         return BeautifulSoup(self.driver.page_source, "html.parser")
 
     def parse_vehicle_details(self, soup: BeautifulSoup):
-        header = soup.find(lambda t: t.name == "header"
-                                     and "Vehicle extras, add-ons and accessories" in t.get_text())
+        header = soup.find(
+            lambda t: t.name == "header"
+            and "Vehicle extras, add-ons and accessories" in t.get_text()
+        )
         items, freetext = [], ""
         if header:
             ul = header.find_next("ul")
@@ -149,7 +162,9 @@ class ArticleLinkParser:
             table = header.find_next("table")
             if table:
                 for row in table.find_all("tr"):
-                    data.append([c.get_text(strip=True) for c in row.find_all(["td", "th"])])
+                    data.append(
+                        [c.get_text(strip=True) for c in row.find_all(["td", "th"])]
+                    )
             else:
                 self.logger.warning("Table missing after '%s'", header_text)
         else:

@@ -1,8 +1,9 @@
-import tkinter as tk
-from tkinter import ttk, messagebox
-from pathlib import Path
-import json
+# standard library
 import copy
+import json
+import tkinter as tk
+from pathlib import Path
+from tkinter import messagebox, ttk
 
 """
 GUI query manager – two‑column version (Queries | Car brand)
@@ -35,8 +36,12 @@ def load_queries() -> list[dict]:
         raw = json.loads(QUERIES_FILE.read_text(encoding="utf-8"))
         if isinstance(raw, list):
             return [
-                {"query": str(item.get("query", "")), "brand": str(item.get("brand", ""))}
-                for item in raw if isinstance(item, dict)
+                {
+                    "query": str(item.get("query", "")),
+                    "brand": str(item.get("brand", "")),
+                }
+                for item in raw
+                if isinstance(item, dict)
             ]
     except FileNotFoundError:
         return []
@@ -47,7 +52,9 @@ def load_queries() -> list[dict]:
 
 def save_queries(rows: list[dict]):
     DATA_DIR.mkdir(exist_ok=True)
-    QUERIES_FILE.write_text(json.dumps(rows, indent=2, ensure_ascii=False), encoding="utf-8")
+    QUERIES_FILE.write_text(
+        json.dumps(rows, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
 
 
 # --------------------------------------------------------------------
@@ -149,22 +156,34 @@ class QueryGUI(tk.Tk):
         btn_row = tk.Frame(self)
         btn_row.pack(fill=tk.X, padx=10, pady=8)
 
-        tk.Button(btn_row, text="Add", width=10, command=self.add_row).pack(side=tk.LEFT)
-        tk.Button(btn_row, text="Update", width=10, command=self.update_row).pack(side=tk.LEFT, padx=5)
-        tk.Button(btn_row, text="Delete selected", command=self.delete_selected).pack(side=tk.LEFT, padx=5)
+        tk.Button(btn_row, text="Add", width=10, command=self.add_row).pack(
+            side=tk.LEFT
+        )
+        tk.Button(btn_row, text="Update", width=10, command=self.update_row).pack(
+            side=tk.LEFT, padx=5
+        )
+        tk.Button(btn_row, text="Delete selected", command=self.delete_selected).pack(
+            side=tk.LEFT, padx=5
+        )
 
         # --- Finish / Cancel bottom‑right --- #
         bottom = tk.Frame(self)
         bottom.pack(fill=tk.X, padx=10, pady=(0, 10), anchor="e")
 
-        tk.Button(bottom, text="Finish", width=10, command=self.finish_and_exit).pack(side=tk.RIGHT, padx=5)
-        tk.Button(bottom, text="Cancel", width=10, command=self.quit_without_save).pack(side=tk.RIGHT, padx=5)
+        tk.Button(bottom, text="Finish", width=10, command=self.finish_and_exit).pack(
+            side=tk.RIGHT, padx=5
+        )
+        tk.Button(bottom, text="Cancel", width=10, command=self.quit_without_save).pack(
+            side=tk.RIGHT, padx=5
+        )
 
     # -------------------- Utils -------------------- #
     def refresh_tree(self):
         self.tree.delete(*self.tree.get_children())
         for idx, row in enumerate(self.rows):
-            self.tree.insert("", tk.END, iid=str(idx), values=(row["query"], row["brand"]))
+            self.tree.insert(
+                "", tk.END, iid=str(idx), values=(row["query"], row["brand"])
+            )
 
     def clear_entries(self):
         self.entry_query.delete(0, tk.END)
@@ -194,7 +213,11 @@ class QueryGUI(tk.Tk):
     # -------------------- Event Handlers -------------------- #
     def on_click(self, event):
         region = self.tree.identify("region", event.x, event.y)
-        self.selected_column = None if region != "cell" else int(self.tree.identify_column(event.x).lstrip("#")) - 1
+        self.selected_column = (
+            None
+            if region != "cell"
+            else int(self.tree.identify_column(event.x).lstrip("#")) - 1
+        )
 
     def on_select(self, _evt=None):
         sel = self.tree.selection()
@@ -208,7 +231,11 @@ class QueryGUI(tk.Tk):
             self.entry_query.insert(0, row["query"])
         elif self.selected_column == 1 and not self.entry_brand.get().strip():
             self.entry_brand.insert(0, row["brand"])
-        elif self.selected_column is None and not self.entry_query.get().strip() and not self.entry_brand.get().strip():
+        elif (
+            self.selected_column is None
+            and not self.entry_query.get().strip()
+            and not self.entry_brand.get().strip()
+        ):
             self.entry_query.insert(0, row["query"])
             self.entry_brand.insert(0, row["brand"])
 
@@ -241,7 +268,10 @@ class QueryGUI(tk.Tk):
         new_b = self.entry_brand.get().strip() or row["brand"]
 
         # Prevent duplicates except for the row being edited
-        if any(i != idx and r["query"] == new_q and r["brand"] == new_b for i, r in enumerate(self.rows)):
+        if any(
+            i != idx and r["query"] == new_q and r["brand"] == new_b
+            for i, r in enumerate(self.rows)
+        ):
             messagebox.showinfo("Info", "Another identical row already exists.")
             return
 

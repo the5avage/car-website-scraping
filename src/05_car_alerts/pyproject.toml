@@ -1,0 +1,8 @@
+[tool.isort]
+profile = "black"           # keep Black‑compatible formatting
+line_length = 80
+
+import_heading_stdlib = "standard library"
+import_heading_thirdparty = "third party libraries"
+import_heading_firstparty = "project imports"
+import_heading_localfolder = "local imports"

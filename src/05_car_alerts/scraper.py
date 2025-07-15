@@ -3,7 +3,10 @@ Wrap the existing Selenium scraper so it *yields* one vehicle at a time.
 That lets the matcher run in parallel or in small batches.
 """
 
+# standard library
 from collections.abc import Iterator
+
+# project imports
 from article_parser import ArticleLinkParser  # your original code
 
 
@@ -21,7 +24,7 @@ def vehicle_generator(base_url: str, max_pages: int) -> Iterator[dict]:
 
             yield {
                 "url": url,
-                "information": {k.rstrip(':'): v for k, v in info},
+                "information": {k.rstrip(":"): v for k, v in info},
                 "details_list": details,
                 "details_text": text,
             }

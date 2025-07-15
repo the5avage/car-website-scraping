@@ -3,15 +3,17 @@ Loads the ML model, the user queries, and the 'already mailed' cache.
 Runs match() on every Nth vehicle and returns a list of (url, query) hits.
 """
 
-from pathlib import Path
+# standard library
 import json
-from typing import Iterable, List, Tuple
 import random
+from pathlib import Path
+from typing import Iterable, List, Tuple
 
 CACHE_FILE = Path("data/sent.json")
 QUERIES_FILE = Path("data/queries.json")
 
 # ------- helpers ---------------------------------------------------------- #
+
 
 def _load(path: Path, default):
     if path.exists():
@@ -25,6 +27,7 @@ def _save(path: Path, obj) -> None:
 
 # ------- public API ------------------------------------------------------- #
 
+
 class CarMatcher:
     """Stateful matcher that remembers what has been emailed."""
 
@@ -34,7 +37,9 @@ class CarMatcher:
 
     # dummy stub; replace with real model load
     def _load_model(self, path: str):
+        # third party libraries
         import torch
+        import transformers
         from transformers import AutoModel
 
         model = AutoModel.from_pretrained("bert-base-uncased")
@@ -47,8 +52,8 @@ class CarMatcher:
         """Return model score 0–1."""
         return random.random() > 0.7
         # 👉 adapt to your real model’s API
-        #features = {**car_json["information"], "details": car_json["details_text"]}
-        #return self.model.predict_proba([features, query])[0]
+        # features = {**car_json["information"], "details": car_json["details_text"]}
+        # return self.model.predict_proba([features, query])[0]
 
     # ------------------------------------------------------------------ #
 
@@ -75,7 +80,7 @@ class CarMatcher:
             for car_json in batch:
                 url = car_json["url"]
                 if url in self.sent_cache:
-                    continue   # avoid duplicates
+                    continue  # avoid duplicates
 
                 for q in queries:
                     if self._predict(q, car_json) >= threshold:

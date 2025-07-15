@@ -1,6 +1,8 @@
+# standard library
 import smtplib
 from email.message import EmailMessage
 from typing import List, Tuple
+
 
 def send_car_email(
     send_from: str,

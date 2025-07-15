@@ -44,7 +44,7 @@ DATA_DIR.mkdir(exist_ok=True)
 def _save_batch_to_yaml(batch: list[dict], logger):
     """
     Append *batch* to the current YAML file, skipping URLs that
-    already exist; start a new file after 3 000 entries.
+    already exist; start a new file after 3000 entries.
     """
     # discover latest file
     files = sorted(DATA_DIR.glob("vehicles_data_*.yaml"))
@@ -75,7 +75,7 @@ def _save_batch_to_yaml(batch: list[dict], logger):
         if len(existing) >= 3000:
             with current.open("w", encoding="utf-8") as fh:
                 yaml.safe_dump(existing, fh, allow_unicode=True)
-            logger.info("Saved 3 000 rows → %s", current.name)
+            logger.info("Saved 3000 rows → %s", current.name)
             # start fresh
             idx = int(current.stem.split("_")[-1]) + 1
             current = DATA_DIR / f"vehicles_data_{idx}.yaml"
@@ -102,7 +102,6 @@ def parse_vehicle(parser: ArticleLinkParser, url: str) -> dict:
 
 
 def run_daily_job():
-    # ---------- logger (unchanged) ---------- #
     logger = logging.getLogger("Orchestrator")
     if not logger.handlers:
         sh = logging.StreamHandler()
@@ -136,18 +135,19 @@ def run_daily_job():
 
             logger.info("• Batch #%02d – %d links", batch_idx, len(links_chunk))
 
-            # ❶ Parse this batch
+            # Parse this batch
             cars = [parse_vehicle(parser, url) for url in links_chunk]
 
             _save_batch_to_yaml(cars, logger)
 
-            # ❷ Match immediately
+            # Match the batch entries
             hits = matcher.match(cars, batch_size=BATCH_SIZE, threshold=THRESHOLD)
 
             if hits:
                 mailed += len(hits)
                 logger.info("  ↪ %d hits – would send e‑mail", len(hits))
 
+                # Skip for now, since the SMTP Server is not setup
                 # -------------------------------------------------------
                 # send_car_email(
                 #     send_from=SEND_FROM,

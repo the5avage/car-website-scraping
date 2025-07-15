@@ -7,7 +7,7 @@ That lets the matcher run in parallel or in small batches.
 from collections.abc import Iterator
 
 # project imports
-from article_parser import ArticleLinkParser  # your original code
+from article_parser import ArticleLinkParser
 
 
 def vehicle_generator(base_url: str, max_pages: int) -> Iterator[dict]:

@@ -22,10 +22,6 @@ Shortcuts & Controls
 The list is persisted as a JSON array of objects with keys ``query`` and ``brand``.
 """
 
-# --------------------------------------------------------------------
-#  Persistence helpers
-# --------------------------------------------------------------------
-
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"  # project‑level data dir
 QUERIES_FILE = DATA_DIR / "queries.json"
 
@@ -55,11 +51,6 @@ def save_queries(rows: list[dict]):
     QUERIES_FILE.write_text(
         json.dumps(rows, indent=2, ensure_ascii=False), encoding="utf-8"
     )
-
-
-# --------------------------------------------------------------------
-#  Main GUI class
-# --------------------------------------------------------------------
 
 
 class QueryGUI(tk.Tk):

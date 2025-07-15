@@ -16,20 +16,6 @@ from pytz import timezone
 # project imports
 from orchestrator import run_daily_job
 
-# ------------------------------------------------------------------ #
-#  Logger for the scheduler itself (optional but handy)
-# ------------------------------------------------------------------ #
-log = logging.getLogger("Scheduler")
-if not log.handlers:
-    h = logging.StreamHandler()
-    h.setFormatter(
-        logging.Formatter(
-            "[Scheduler]: %(asctime)s  %(levelname)s  %(message)s", "%H:%M:%S"
-        )
-    )
-    log.addHandler(h)
-    log.setLevel(logging.INFO)
-
 
 # ------------------------------------------------------------------ #
 #  CLI argument parsing
@@ -55,7 +41,7 @@ def parse_cli():
 # ------------------------------------------------------------------ #
 #  Scheduler bootstrap
 # ------------------------------------------------------------------ #
-def start(hour: int, minute: int):
+def start(hour: int, minute: int, log: logging.Logger):
     berlin = timezone("Europe/Berlin")
     sched = BlockingScheduler(timezone=berlin)
 
@@ -76,5 +62,17 @@ def start(hour: int, minute: int):
 
 # ------------------------------------------------------------------ #
 if __name__ == "__main__":
+
+    log = logging.getLogger("Scheduler")
+    if not log.handlers:
+        h = logging.StreamHandler()
+        h.setFormatter(
+            logging.Formatter(
+                "[Scheduler]: %(asctime)s  %(levelname)s  %(message)s", "%H:%M:%S"
+            )
+        )
+        log.addHandler(h)
+        log.setLevel(logging.INFO)
+
     h, m = parse_cli()
-    start(h, m)
+    start(h, m, log)

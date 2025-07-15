@@ -9,7 +9,7 @@ smtp:
 
 # Scraper + matcher
 scraper:
-  base_url:   "https://autobid.de/en/search-results?e367=1&sortingType=auctionStartDate-ASCENDING"
+  base_url:   "https://autobid.de/en/search-results?e367=1&sortingType=auctionStartDate-ASCENDING" # DO NOT CHANGE
   max_pages:  130
   headless:   true
   delay:      [1, 2]

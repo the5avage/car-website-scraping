@@ -1,3 +1,5 @@
+"""This Class is hard coded for the url: https://autobid.de/en/search-results?e367=1&sortingType=auctionStartDate-ASCENDING"""
+
 # standard library
 import logging
 import random
@@ -21,16 +23,12 @@ class ArticleLinkParser:
     :param delay_range: *(min, max)* random delay to mimic a human
     """
 
-    # ------------------------------------------------------------------ #
     def __init__(self, headless: bool = False, delay_range: tuple[int, int] = (1, 3)):
         self.delay_range = delay_range
         self.driver = None
         self._init_logger()
         self.setup_driver(headless)
 
-    # ------------------------------------------------------------------ #
-    #  Logger (instance‑level, name = ``ArticleParser``)
-    # ------------------------------------------------------------------ #
     def _init_logger(self):
         self.logger = logging.getLogger("ArticleParser")
         if not self.logger.handlers:  # configure only once
@@ -44,9 +42,6 @@ class ArticleLinkParser:
             self.logger.addHandler(sh)
             self.logger.setLevel(logging.INFO)
 
-    # ------------------------------------------------------------------ #
-    #  Driver setup
-    # ------------------------------------------------------------------ #
     def setup_driver(self, headless: bool = False):
         """Create a Chrome driver with lightweight anti‑bot tweaks."""
         chrome_options = Options()
@@ -69,9 +64,6 @@ class ArticleLinkParser:
         self.driver.set_window_size(1366, 768)
         self.logger.info("Chrome driver ready (headless=%s)", headless)
 
-    # ------------------------------------------------------------------ #
-    #  Convenience helpers
-    # ------------------------------------------------------------------ #
     def human_delay(self, lo: float | None = None, hi: float | None = None):
         lo = self.delay_range[0] if lo is None else lo
         hi = self.delay_range[1] if hi is None else hi
@@ -84,9 +76,6 @@ class ArticleLinkParser:
         self.driver.execute_script("window.scrollTo(0,0);")
         self.human_delay(1, 2)
 
-    # ------------------------------------------------------------------ #
-    #  Link helpers
-    # ------------------------------------------------------------------ #
     def get_all_links(self, url: str) -> list[dict]:
         """Return every ``<a>`` element as ``dict(url, text, element)``."""
         self.logger.debug("GET %s", url)
@@ -110,7 +99,7 @@ class ArticleLinkParser:
         return links
 
     def filter_item_links(self, links: list[dict]) -> list[str]:
-        """Keep only */item/* links and swap ``#content`` with ``/details``."""
+        """Keep only item, links and swap content with details"""
         seen, items = set(), []
         for link in links:
             url = link["url"]
@@ -130,7 +119,7 @@ class ArticleLinkParser:
             return []
 
     # ------------------------------------------------------------------ #
-    #  Vehicle‑page helpers (unchanged logic, logging added)
+    #  Vehicle‑page helpers
     # ------------------------------------------------------------------ #
     def get_vehicle_soup(self, vehicle_url: str) -> BeautifulSoup:
         self.human_delay()
@@ -172,7 +161,7 @@ class ArticleLinkParser:
         return data
 
     # ------------------------------------------------------------------ #
-    #  Pagination – yields batches of unseen links
+    #   Main Entry Point
     # ------------------------------------------------------------------ #
     def scrape_all_links(
         self,
@@ -207,7 +196,6 @@ class ArticleLinkParser:
         if batch:
             yield batch
 
-    # ------------------------------------------------------------------ #
     def close(self):
         """Quit Chrome and log the teardown."""
         if self.driver:

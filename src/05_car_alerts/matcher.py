@@ -25,21 +25,15 @@ def _save(path: Path, obj) -> None:
     path.write_text(json.dumps(obj, ensure_ascii=False, indent=2))
 
 
-# ------- public API ------------------------------------------------------- #
-
-
 class CarMatcher:
-    """Stateful matcher that remembers what has been emailed."""
+    """Stateful matcher that remembers what has been emailed, using a local file."""
 
     def __init__(self, model_path: str):
         self.model = self._load_model(model_path)
         self.sent_cache: set[str] = set(_load(CACHE_FILE, []))
 
-    # dummy stub; replace with real model load
     def _load_model(self, path: str):
-        # third party libraries
         import torch
-        import transformers
         from transformers import AutoModel
 
         model = AutoModel.from_pretrained("bert-base-uncased")
@@ -51,7 +45,7 @@ class CarMatcher:
     def _predict(self, query: str, car_json: dict) -> float:
         """Return model score 0–1."""
         return random.random() > 0.7
-        # 👉 adapt to your real model’s API
+        # USE THE REAL MODEL HERE
         # features = {**car_json["information"], "details": car_json["details_text"]}
         # return self.model.predict_proba([features, query])[0]
 

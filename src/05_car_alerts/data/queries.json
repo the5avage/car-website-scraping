@@ -1,0 +1,14 @@
+[
+  {
+    "query": "Im looking for a red car with 5 doors, petrol engine and less than 200.000km.",
+    "brand": ""
+  },
+  {
+    "query": "I'm looking for a black suv with diesel.",
+    "brand": "BMW"
+  },
+  {
+    "query": "I'm looking for a white car with 3 doors and sport seats.",
+    "brand": ""
+  }
+]

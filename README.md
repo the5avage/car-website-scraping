@@ -7,7 +7,30 @@ he is notified by email.
 
 ## Experimental setup
 
-Information about vehicles was scraped from autobid.de. Questions in natural language
+Information about vehicles was scraped from autobid.de. For each car 5 positive and 5 negative questions where generated with GPT-4 (openAI API).
+
+DeBERTa and RoBERTa models are then finetuned as Crossencoders for binary classification.
+Additionally the performance of a 5 fold crossvalidation ensemble was evaluated.
+
+Also pretrained crossencoders from the sentence_transformer library had been used as a baseline for comparison.
+
+Finetuning achieved good performance for both models. DeBERTa achieved slightly better performance which is expected since it is a bigger and newer model.
+
+An ensemble of 5 models trained with 5 fold crossvalidation did yield very minor improvements over a single model.
+
+## Challenges
+
+Especially challenging was to generate good labeled questions for finetuning. Generating labeled questions by hand was considered not feasible in the given timeframe.  
+Different approaches to automatically generate the questions had been tried.  
+For example we tried to generate the questions with an autogregressive LLM on the cluster. The results had been not good enough.  
+Finally we used the openAI API to generate questions for 600 vehicles (6000 different questions).  
+We used GPT-4 for the highest quality (questions with GPT-3.5-turbo or GPT-4-turbo had been to bad when manually inspecting the results).
+
+## Rerun experiments
+
+To rerun the experiments one needs to execute the notebooks in the order indicated by the prefixes.  
+First one needs to scrape data and generate questions with the chatgpt api. (This can be skipped since the text data is in the data/ directory).  
+Then data 
 
 ## Project structure
 

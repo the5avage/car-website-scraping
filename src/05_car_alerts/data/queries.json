@@ -1,18 +1,14 @@
 [
   {
-    "query": "I am searching for a fast red cabrio",
-    "brand": "audi"
-  },
-  {
-    "query": "I am looking for a minivan that has parking aid and heated exterior mirrors",
-    "brand": "VW"
-  },
-  {
-    "query": "I also need some more queries to test",
+    "query": "Im looking for a red car with 5 doors, petrol engine and less than 200.000km.",
     "brand": ""
   },
   {
-    "query": "and some more",
+    "query": "I'm looking for a black suv with diesel.",
+    "brand": "BMW"
+  },
+  {
+    "query": "I'm looking for a white car with 3 doors and sport seats.",
     "brand": ""
   }
 ]

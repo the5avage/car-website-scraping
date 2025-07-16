@@ -96,7 +96,7 @@ Open [`config/orchestrator.yaml`](config/orchestrator.yaml) and set:
 ### 3. Manage queries (GUI)
 
 ```bash
-python gui/gui_tool.py   # add rows → Finish to save queries.json
+python gui/app.py   # add rows → Finish to save queries.json
 ```
 
 ### 4. Run ad‑hoc scrape

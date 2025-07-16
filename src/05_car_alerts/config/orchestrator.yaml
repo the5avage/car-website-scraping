@@ -10,11 +10,11 @@ smtp:
 # Scraper + matcher
 scraper:
   base_url:   "https://autobid.de/en/search-results?e367=1&sortingType=auctionStartDate-ASCENDING" # DO NOT CHANGE
-  max_pages:  130
-  headless:   true
+  max_pages:  5
+  headless:   false
   delay:      [1, 2]
   batch_size: 10
 
 matcher:
-  threshold:  0.7            # only used for the dummy run
-  model_path: "models/car_matcher.pkl"
+  threshold:  0.5
+  model_path: "C:/Users/saruman/auto_projekt/07_saved_trained_deberta_model"

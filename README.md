@@ -29,8 +29,11 @@ We used GPT-4 for the highest quality (questions with GPT-3.5-turbo or GPT-4-tur
 ## Rerun experiments
 
 To rerun the experiments one needs to execute the notebooks in the order indicated by the prefixes.  
-First one needs to scrape data and generate questions with the chatgpt api. (This can be skipped since the text data is in the data/ directory).  
-Then data 
+First one needs to scrape data and generate questions with the chatgpt api, with the scripts in src/01_data_acquisition (This can be skipped since the text data is in the data/ directory).  
+Then one can run the training (src/03_training_pipline). Training was done on a H100 with cuda12.
+The evaluation plots can be generated with the scripts in src/04_evaluation.
+
+The final app is contained in 05_car_alerts. Further information to run is in the [/src/05_car_alerts/README.md](/src/05_car_alerts/README.md).
 
 ## Project structure
 
@@ -38,11 +41,10 @@ Then data
 |-----------|---------|
 | data/ | Text data used for finetuning |
 | src/01_data_acquisition/ | Scrape vehicle data and generate questions with openAI API |
-| src/02_data_cleansing/ | Data cleaning |
-| src/03_resource_testing/ | Some scripts for experimenting with models and token count |
-| src/04_training_pipeline/ | Finetuning of RoBERTa and DeBERTa |
+| src/02_resource_testing/ | Some scripts for experimenting with models and token count |
+| src/03_training_pipeline/ | Finetuning of RoBERTa and DeBERTa |
+| src/04_evaluation/ | Zero shot evaluation of pretrained models and plots for comparison |
 | src/05_car_alerts/ | Final application that runs at a specific time to check new vehicles and send notifications |
-| src/06_evaluation/ | Zero shot evaluation of pretrained models and plots for comparison |
 
 
 Further information is found in the notebooks and the [/src/05_car_alerts/README.md](/src/05_car_alerts/README.md).

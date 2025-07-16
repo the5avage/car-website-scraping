@@ -101,11 +101,15 @@ python gui/app.py   # add rows → Finish to save queries.json
 
 ### 4. Run ad‑hoc scrape
 
+Run with terminal from root directory 05_car_alerts
+
 ```bash
 python orchestrator.py   # streams batches, logs progress
 ```
 
 ### 5. Schedule daily job
+
+Run with terminal from root directory 05_car_alerts
 
 ```bash
 python scheduler.py          # defaults 06:00 Europe/Berlin

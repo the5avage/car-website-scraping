@@ -16,11 +16,10 @@ QUERIES_FILE = Path("data/queries.json")
 
 # ------- helpers ---------------------------------------------------------- #
 
-
 def _load(path: Path, default):
     if path.exists():
         return json.loads(path.read_text())
-    return default
+    raise FileNotFoundError
 
 
 def _save(path: Path, obj) -> None:
@@ -81,7 +80,7 @@ class CarMatcher:
 
         return " | ".join(description_parts)
 
-    def predict(self, query: str, car_json: dict) -> float:
+    def _predict(self, query: str, car_json: dict) -> float:
         """Return model score 0–1 for how well the query matches the car."""
 
         # Create vehicle description in the same format as training
@@ -119,10 +118,9 @@ class CarMatcher:
         Iterate over cars, score every batch of *batch_size* vehicles.
         Returns the first ‑time hits; updates sent.json on the fly.
         """
-        queries: list[str] = _load(QUERIES_FILE, [])
+        queries: list[dict[str, str]] = _load(QUERIES_FILE, [])
         batch: list[dict] = []
         hits: list[Tuple[str, str]] = []
-
         for car in cars:
             batch.append(car)
 
@@ -135,8 +133,13 @@ class CarMatcher:
                     continue  # avoid duplicates
 
                 for q in queries:
-                    if self._predict(q, car_json) >= threshold:
-                        hits.append((url, q))
+                    if q['brand']:
+
+                        if not all([car_brand for car_brand in q['brand'].split() if car_brand in url]):
+                            continue # if car brands are selected, all must be present in the url
+
+                    if self._predict(q['query'], car_json) >= threshold:
+                        hits.append((url, q['query']))
                         self.sent_cache.add(url)
                         break  # no need to test other queries
 
